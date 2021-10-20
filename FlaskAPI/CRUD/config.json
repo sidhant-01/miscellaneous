@@ -1,0 +1,23 @@
+{
+    "homePage": {
+        "availableEndpoints": {
+            "get_user": "/getuser",
+            "get_all_users": "/getallusers",
+            "create_user": "/createuser",
+            "delete_user": "deleteuser/<id_of_user>",
+            "update_user": "/updateuser"
+        }
+    },
+
+    "openID_URI": "https://login.microsoftonline.com/common/discovery/keys",
+    "tokenIssuer": "https://sts.windows.net/",
+    "tokenAudience": "add4f80c-0f85-48f8-9087-1d01f57ab774",
+    "roles": [
+        "Read",
+        "Write",
+        "Admin"
+    ],
+
+    "connectionString": "mysql+mysqlconnector://root:Password123@localhost:3306/usersdb"
+
+}
