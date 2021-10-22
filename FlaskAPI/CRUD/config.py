@@ -23,5 +23,9 @@ token = {
 databaseConnectionString = {
 
     "connectionString": "mysql+mysqlconnector://root:Password123@localhost:3306/usersdb"
+}
 
+redis = {
+    "host": 'localhost',
+    "port": 6379
 }

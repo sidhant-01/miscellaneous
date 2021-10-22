@@ -8,6 +8,9 @@ from typing import List, Optional
 from user.crud import crud
 from authorizer import authorizer
 from config import homePage
+from redisCache import redisCache
+import json
+from jsonSerializer import jsonSerializer
 
 app = FastAPI()
 
@@ -15,12 +18,16 @@ app = FastAPI()
 async def get_endpoints():
      return homePage
 
-@app.get("/getallusers", response_model=List[userDetails])
+@app.get("/getallusers")
 async def get_all_users(Authorization: str = Header(...),db: Session = Depends(databaseConnection.get_db)):
     role = authorizer.validate_jwt(Authorization)
-    if (role == "Read") or (role == "Write") or (role == "Admin"): 
-        all_Users = crud.get_all_users(db)
-        return all_Users
+    if (role == "Read") or (role == "Write") or (role == "Admin"):
+        users = redisCache.getCache("allusers")
+        if not users:
+            users = crud.get_all_users(db)
+            users = jsonSerializer(users)
+            redisCache.setCache("allusers", users)
+        return users
     raise HTTPException(status_code=401,detail=f"You are not authorized to fetch users !!")
 
 @app.get("/getuser/{id}",response_model=userDetails)

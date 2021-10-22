@@ -1,5 +1,4 @@
 import jwt
-from pydantic.networks import HttpUrl
 import requests
 import base64
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers
