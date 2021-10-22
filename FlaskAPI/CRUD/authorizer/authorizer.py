@@ -6,14 +6,15 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from fastapi import HTTPException
+import config
 
 try:
-    response = requests.get("https://login.microsoftonline.com/common/discovery/keys")
+    response = requests.get(config.token["openID_URI"])
     formatted_response = response.json()
 except:
     raise HTTPException(status_code=500,detail=f"unable to get public keys from azure open id")
-issuer = "https://sts.windows.net/311d38d8-2104-46af-9df1-269cac3940d7/"
-valid_audiences = "api://add4f80c-0f85-48f8-9087-1d01f57ab774"
+issuer = config.token["tokenIssuer"] 
+valid_audiences = "api://" + config.token["tokenAudience"]
 
 
 def get_kid(token):
@@ -54,12 +55,11 @@ def validate_jwt(token):
         role = check_permissions(decoded_token)
         return role
     except:
-        raise HTTPException(status_code=401, detail=f"Invalid Token")      
-roles = ["Read","Write","Admin"]
+        raise HTTPException(status_code=401, detail=f"Invalid Token")
 def check_permissions(decoded_token):
     token_roles = decoded_token.get('roles')
     for role in token_roles:
-        for permittedRole in roles:
+        for permittedRole in config.token["roles"]:
             if permittedRole == role:
                 return role
 

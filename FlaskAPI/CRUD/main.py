@@ -7,18 +7,13 @@ from user.database import databaseConnection
 from typing import List, Optional
 from user.crud import crud
 from authorizer import authorizer
-import json
-
-def load_config():
-    with open(".\config.json") as f:
-        return json.load(f)
+from config import homePage
 
 app = FastAPI()
 
-f = load_config()
 @app.get("/")
 async def get_endpoints():
-     return f["homePage"]
+     return homePage
 
 @app.get("/getallusers", response_model=List[userDetails])
 async def get_all_users(Authorization: str = Header(...),db: Session = Depends(databaseConnection.get_db)):
