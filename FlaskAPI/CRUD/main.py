@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.params import Depends, Header
+from sqlalchemy.sql.functions import user
 from starlette.responses import StreamingResponse
 from user.models.schemas import insertUser, userDetails, updateUser
 from sqlalchemy.orm import Session
@@ -26,8 +27,9 @@ async def get_all_users(Authorization: str = Header(...),db: Session = Depends(d
         if not users:
             users = crud.get_all_users(db)
             users = jsonSerializer(users)
+            users = json.loads(users)
             redisCache.setCache("allusers", users)
-        return users
+        return json.loads(users)
     raise HTTPException(status_code=401,detail=f"You are not authorized to fetch users !!")
 
 @app.get("/getuser/{id}",response_model=userDetails)
